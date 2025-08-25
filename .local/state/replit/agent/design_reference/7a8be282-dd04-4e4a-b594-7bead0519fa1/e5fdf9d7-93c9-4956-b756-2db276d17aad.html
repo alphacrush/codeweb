@@ -1,0 +1,560 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Moderation Dashboard - Production Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0066CC',
+                        success: '#28A745',
+                        warning: '#FFC107',
+                        error: '#DC3545',
+                        background: '#FAFBFC',
+                        surface: '#FFFFFF',
+                        textPrimary: '#1F2937',
+                        textMuted: '#6B7280'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-background font-sans">
+    <!-- @COMPONENT: MainLayout -->
+    <div class="min-h-screen flex">
+        <!-- @COMPONENT: Sidebar -->
+        <aside class="w-64 bg-surface border-r border-gray-200 flex flex-col">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-textPrimary">ContentGuard</h1>
+                        <p class="text-xs text-textMuted">Moderation Dashboard</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-primary text-white font-medium">
+                            <i class="fas fa-chart-line text-sm"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-textMuted hover:bg-gray-50 hover:text-textPrimary transition-colors">
+                            <i class="fas fa-search text-sm"></i>
+                            <span>Content Analysis</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-textMuted hover:bg-gray-50 hover:text-textPrimary transition-colors">
+                            <i class="fas fa-list text-sm"></i>
+                            <span>Processing Queue</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-textMuted hover:bg-gray-50 hover:text-textPrimary transition-colors">
+                            <i class="fas fa-chart-bar text-sm"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-textMuted hover:bg-gray-50 hover:text-textPrimary transition-colors">
+                            <i class="fas fa-cog text-sm"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Server Status -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                    <div>
+                        <p class="text-sm font-medium text-green-800">Server Online</p>
+                        <p class="text-xs text-green-600">WebSocket Connected</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent -->
+        <main class="flex-1 flex flex-col">
+            <!-- @COMPONENT: TopBar -->
+            <header class="bg-surface border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-textPrimary">Dashboard Overview</h2>
+                        <p class="text-sm text-textMuted">Real-time content moderation monitoring</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- WebSocket Status Indicator -->
+                        <div class="flex items-center space-x-2 px-3 py-1 bg-green-50 rounded-full border border-green-200">
+                            <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium text-green-800">Live</span>
+                        </div>
+                        
+                        <!-- User Avatar -->
+                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-gray-600 text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: TopBar -->
+
+            <!-- @COMPONENT: DashboardContent -->
+            <div class="flex-1 p-6 space-y-6">
+                <!-- @COMPONENT: StatsGrid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- @COMPONENT: StatCard -->
+                    <div class="bg-surface p-6 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-textMuted">Total Analyzed</p>
+                                <p class="text-2xl font-bold text-textPrimary" data-bind="stats.totalAnalyzed">24,847</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-primary text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center space-x-2">
+                            <span class="text-sm text-success">
+                                <i class="fas fa-arrow-up text-xs"></i> 12.5%
+                            </span>
+                            <span class="text-sm text-textMuted">vs last week</span>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: StatCard -->
+
+                    <!-- @COMPONENT: StatCard -->
+                    <div class="bg-surface p-6 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-textMuted">Flagged Content</p>
+                                <p class="text-2xl font-bold text-textPrimary" data-bind="stats.flaggedContent">1,247</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-error text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center space-x-2">
+                            <span class="text-sm text-error">
+                                <i class="fas fa-arrow-up text-xs"></i> 5.2%
+                            </span>
+                            <span class="text-sm text-textMuted">vs last week</span>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: StatCard -->
+
+                    <!-- @COMPONENT: StatCard -->
+                    <div class="bg-surface p-6 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-textMuted">Queue Length</p>
+                                <p class="text-2xl font-bold text-textPrimary" data-bind="stats.queueLength">156</p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-warning text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center space-x-2">
+                            <span class="text-sm text-success">
+                                <i class="fas fa-arrow-down text-xs"></i> 8.1%
+                            </span>
+                            <span class="text-sm text-textMuted">vs last hour</span>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: StatCard -->
+
+                    <!-- @COMPONENT: StatCard -->
+                    <div class="bg-surface p-6 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-textMuted">Accuracy Rate</p>
+                                <p class="text-2xl font-bold text-textPrimary" data-bind="stats.accuracyRate">97.3%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-success text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center space-x-2">
+                            <span class="text-sm text-success">
+                                <i class="fas fa-arrow-up text-xs"></i> 0.8%
+                            </span>
+                            <span class="text-sm text-textMuted">vs last week</span>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: StatCard -->
+                </div>
+                <!-- @END_COMPONENT: StatsGrid -->
+
+                <!-- @COMPONENT: MainPanels -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- @COMPONENT: ContentAnalysisPanel -->
+                    <div class="lg:col-span-2 bg-surface rounded-lg border border-gray-200 shadow-sm">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-textPrimary">Content Analysis</h3>
+                                <button class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>New Analysis
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <!-- Analysis Form -->
+                            <div class="space-y-4 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-textPrimary mb-2">Content Type</label>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                        <button class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors bg-primary text-white border-primary">
+                                            <i class="fas fa-font mr-2"></i>Text
+                                        </button>
+                                        <button class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                            <i class="fas fa-image mr-2"></i>Image
+                                        </button>
+                                        <button class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                            <i class="fas fa-video mr-2"></i>Video
+                                        </button>
+                                        <button class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                            <i class="fas fa-music mr-2"></i>Audio
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-textPrimary mb-2">Content Input</label>
+                                    <textarea 
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none" 
+                                        rows="4" 
+                                        placeholder="Paste content here for analysis..."
+                                        data-mock="true"
+                                    >Check out this amazing new product that will change your life! Click here to buy now with 90% discount!</textarea>
+                                </div>
+                                
+                                <button class="w-full px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-blue-700 transition-colors" data-event="click:analyzeContent">
+                                    <i class="fas fa-search mr-2"></i>Analyze Content
+                                </button>
+                            </div>
+                            
+                            <!-- Analysis Results -->
+                            <div class="border-t border-gray-200 pt-6">
+                                <h4 class="text-sm font-semibold text-textPrimary mb-4">Recent Analysis Results</h4>
+                                <div class="space-y-3">
+                                    <!-- @MAP: recentAnalyses.map(analysis => ( -->
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg" data-mock="true">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-exclamation-triangle text-error text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-textPrimary">Suspicious Marketing Text</p>
+                                                <p class="text-xs text-textMuted">Detected: Fake discount claims</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">High Risk</span>
+                                            <span class="text-xs text-textMuted">2 min ago</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg" data-mock="true">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-check-circle text-success text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-textPrimary">Product Review Text</p>
+                                                <p class="text-xs text-textMuted">Clean content detected</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Safe</span>
+                                            <span class="text-xs text-textMuted">5 min ago</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg" data-mock="true">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-exclamation-circle text-warning text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-textPrimary">Social Media Image</p>
+                                                <p class="text-xs text-textMuted">Detected: Minor violence indicators</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">Medium Risk</span>
+                                            <span class="text-xs text-textMuted">8 min ago</span>
+                                        </div>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: ContentAnalysisPanel -->
+
+                    <!-- @COMPONENT: RealTimeMonitoring -->
+                    <div class="space-y-6">
+                        <!-- @COMPONENT: ProcessingQueue -->
+                        <div class="bg-surface rounded-lg border border-gray-200 shadow-sm">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-textPrimary">Processing Queue</h3>
+                                <p class="text-sm text-textMuted">Real-time processing status</p>
+                            </div>
+                            <div class="p-4">
+                                <div class="space-y-3">
+                                    <!-- @MAP: processingQueue.map(item => ( -->
+                                    <div class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg" data-mock="true">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-cog text-primary text-sm animate-spin"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-textPrimary">Video Analysis #1247</p>
+                                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                                <div class="bg-primary h-2 rounded-full w-3/4"></div>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs text-textMuted">75%</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg" data-mock="true">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-clock text-primary text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-textPrimary">Audio Analysis #1248</p>
+                                            <p class="text-xs text-textMuted">Waiting in queue...</p>
+                                        </div>
+                                        <span class="text-xs text-textMuted">Pending</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg" data-mock="true">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-clock text-primary text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-textPrimary">Text Analysis #1249</p>
+                                            <p class="text-xs text-textMuted">Waiting in queue...</p>
+                                        </div>
+                                        <span class="text-xs text-textMuted">Pending</span>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: ProcessingQueue -->
+
+                        <!-- @COMPONENT: SystemHealth -->
+                        <div class="bg-surface rounded-lg border border-gray-200 shadow-sm">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-textPrimary">System Health</h3>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-textPrimary">Express Server</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-2 h-2 bg-success rounded-full"></div>
+                                        <span class="text-sm text-success">Online</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-textPrimary">WebSocket Connection</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                                        <span class="text-sm text-success">Connected</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-textPrimary">Database (Neon)</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-2 h-2 bg-success rounded-full"></div>
+                                        <span class="text-sm text-success">Connected</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-textPrimary">Analysis Pipeline</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-2 h-2 bg-success rounded-full"></div>
+                                        <span class="text-sm text-success">Running</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-2 border-t border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-medium text-textPrimary">CPU Usage</span>
+                                        <span class="text-sm text-textMuted">24%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-success h-2 rounded-full w-1/4"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-medium text-textPrimary">Memory Usage</span>
+                                        <span class="text-sm text-textMuted">68%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-warning h-2 rounded-full w-2/3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: SystemHealth -->
+                    </div>
+                    <!-- @END_COMPONENT: RealTimeMonitoring -->
+                </div>
+                <!-- @END_COMPONENT: MainPanels -->
+
+                <!-- @COMPONENT: RecentActivity -->
+                <div class="bg-surface rounded-lg border border-gray-200 shadow-sm">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-textPrimary">Recent Activity</h3>
+                            <button class="text-sm text-primary hover:text-blue-700 font-medium">View All</button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <!-- @MAP: recentActivity.map(activity => ( -->
+                            <div class="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-flag text-error text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-textPrimary">High-risk content flagged</p>
+                                    <p class="text-sm text-textMuted">Violence detected in video upload from user @suspicious_user</p>
+                                    <p class="text-xs text-textMuted mt-1">2 minutes ago</p>
+                                </div>
+                                <button class="px-3 py-1 text-xs bg-gray-100 text-textMuted rounded-lg hover:bg-gray-200 transition-colors">
+                                    Review
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-warning text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-textPrimary">Fake news detection alert</p>
+                                    <p class="text-sm text-textMuted">Text analysis identified potential misinformation in article submission</p>
+                                    <p class="text-xs text-textMuted mt-1">5 minutes ago</p>
+                                </div>
+                                <button class="px-3 py-1 text-xs bg-gray-100 text-textMuted rounded-lg hover:bg-gray-200 transition-colors">
+                                    Review
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-check-circle text-success text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-textPrimary">Batch analysis completed</p>
+                                    <p class="text-sm text-textMuted">Successfully processed 247 content items with 99.2% accuracy</p>
+                                    <p class="text-xs text-textMuted mt-1">12 minutes ago</p>
+                                </div>
+                                <button class="px-3 py-1 text-xs bg-gray-100 text-textMuted rounded-lg hover:bg-gray-200 transition-colors">
+                                    View
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-cog text-primary text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-textPrimary">System update deployed</p>
+                                    <p class="text-sm text-textMuted">Enhanced audio analysis model v2.1 is now active</p>
+                                    <p class="text-xs text-textMuted mt-1">1 hour ago</p>
+                                </div>
+                                <button class="px-3 py-1 text-xs bg-gray-100 text-textMuted rounded-lg hover:bg-gray-200 transition-colors">
+                                    Details
+                                </button>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: RecentActivity -->
+            </div>
+            <!-- @END_COMPONENT: DashboardContent -->
+        </main>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: MainLayout -->
+
+    <!-- @COMPONENT: ErrorModal -->
+    <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-surface rounded-lg border border-gray-200 shadow-lg max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-error"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-textPrimary">Connection Error</h3>
+                </div>
+                <p class="text-sm text-textMuted mb-6">Unable to connect to the server. Please check your connection and try again.</p>
+                <div class="flex space-x-3">
+                    <button class="flex-1 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        Retry Connection
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 text-textMuted text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ErrorModal -->
+
+    <script>
+        // TODO: Implement WebSocket connection management
+        // TODO: Implement real-time data updates
+        // TODO: Implement form submission handlers
+        // TODO: Implement error handling and reconnection logic
+        
+        (function() {
+            // Simulated WebSocket connection status
+            let isConnected = true;
+            
+            // Simulated real-time updates
+            function simulateRealTimeUpdates() {
+                // This would be replaced with actual WebSocket event handlers
+                console.log('Simulating real-time updates...');
+            }
+            
+            // Initialize dashboard
+            function initDashboard() {
+                console.log('Dashboard initialized');
+                simulateRealTimeUpdates();
+            }
+            
+            // Initialize when DOM is loaded
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        })();
+    </script>
+</body>
+</html>
