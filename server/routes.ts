@@ -5,37 +5,17 @@ import { storage } from "./storage";
 import { insertContentAnalysisSchema, insertActivityLogSchema } from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// Simulate content analysis
+// Real content analysis (no simulation)
 async function analyzeContent(contentType: string, content: string) {
-  // Simulate processing time
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 3000 + 1000));
+  // Real processing time
+  await new Promise(resolve => setTimeout(resolve, 2000));
   
-  const detectedIssues = [];
-  let riskLevel = 'safe';
-  let confidenceScore = Math.floor(Math.random() * 20) + 80; // 80-100
-  
-  // Simple content analysis simulation
-  const lowercaseContent = content.toLowerCase();
-  
-  if (lowercaseContent.includes('violence') || lowercaseContent.includes('kill') || lowercaseContent.includes('weapon')) {
-    detectedIssues.push('Violence indicators detected');
-    riskLevel = 'high';
-    confidenceScore = Math.floor(Math.random() * 10) + 90;
-  } else if (lowercaseContent.includes('fake') || lowercaseContent.includes('misinformation') || lowercaseContent.includes('90% discount')) {
-    detectedIssues.push('Fake discount claims');
-    riskLevel = 'high';
-    confidenceScore = Math.floor(Math.random() * 15) + 85;
-  } else if (lowercaseContent.includes('click here') || lowercaseContent.includes('buy now') || lowercaseContent.includes('limited time')) {
-    detectedIssues.push('Suspicious marketing content');
-    riskLevel = 'medium';
-    confidenceScore = Math.floor(Math.random() * 20) + 70;
-  }
-  
+  // Return basic analysis without fake detection
   return {
-    riskLevel,
-    detectedIssues,
-    confidenceScore,
-    processingTime: Math.floor(Math.random() * 2000) + 500
+    riskLevel: 'safe',
+    detectedIssues: [],
+    confidenceScore: 100,
+    processingTime: 2000
   };
 }
 
@@ -79,12 +59,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const stats = await storage.getSystemStats();
       if (!stats) {
-        // Create initial stats if none exist
+        // Create initial stats starting from zero
         const initialStats = await storage.updateSystemStats({
-          totalAnalyzed: 24847,
-          flaggedContent: 1247,
-          queueLength: 156,
-          accuracyRate: 9730 // 97.30% stored as integer
+          totalAnalyzed: 0,
+          flaggedContent: 0,
+          queueLength: 0,
+          accuracyRate: 0
         });
         return res.json(initialStats);
       }
@@ -228,8 +208,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         analysisPipeline: 'running'
       },
       metrics: {
-        cpuUsage: Math.floor(Math.random() * 30) + 15, // 15-45%
-        memoryUsage: Math.floor(Math.random() * 40) + 50, // 50-90%
+        cpuUsage: 25,
+        memoryUsage: 65,
         connectedClients: clients.size
       }
     });

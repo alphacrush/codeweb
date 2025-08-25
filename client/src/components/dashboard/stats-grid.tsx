@@ -79,7 +79,7 @@ export default function StatsGrid() {
       <StatCard
         title="Total Analyzed"
         value={stats.totalAnalyzed.toLocaleString()}
-        change="12.5%"
+        change="0%"
         changeType="positive"
         icon={<BarChart3 className="text-primary" size={20} />}
         testId="stat-total-analyzed"
@@ -88,8 +88,8 @@ export default function StatsGrid() {
       <StatCard
         title="Flagged Content"
         value={stats.flaggedContent.toLocaleString()}
-        change="5.2%"
-        changeType="negative"
+        change="0%"
+        changeType="positive"
         icon={<AlertTriangle className="text-destructive" size={20} />}
         testId="stat-flagged-content"
       />
@@ -97,7 +97,7 @@ export default function StatsGrid() {
       <StatCard
         title="Queue Length"
         value={stats.queueLength.toString()}
-        change="8.1%"
+        change="0%"
         changeType="positive"
         icon={<Clock className="text-warning" size={20} />}
         testId="stat-queue-length"
@@ -105,8 +105,8 @@ export default function StatsGrid() {
       
       <StatCard
         title="Accuracy Rate"
-        value={`${(stats.accuracyRate / 100).toFixed(1)}%`}
-        change="0.8%"
+        value={stats.accuracyRate > 0 ? `${(stats.accuracyRate / 100).toFixed(1)}%` : "0%"}
+        change="0%"
         changeType="positive"
         icon={<CheckCircle className="text-success" size={20} />}
         testId="stat-accuracy-rate"
