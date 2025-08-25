@@ -113,10 +113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const analysisData = insertContentAnalysisSchema.parse(req.body);
       
       // Create initial analysis record
-      const analysis = await storage.createContentAnalysis({
-        ...analysisData,
-        status: 'pending'
-      });
+      const analysis = await storage.createContentAnalysis(analysisData);
       
       // Log activity
       await storage.createActivityLog({

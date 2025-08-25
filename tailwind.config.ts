@@ -52,7 +52,7 @@ export default {
           "5": "var(--chart-5)",
         },
         sidebar: {
-          DEFAULT: "var(--sidebar-background)",
+          DEFAULT: "var(--sidebar)",
           foreground: "var(--sidebar-foreground)",
           primary: "var(--sidebar-primary)",
           "primary-foreground": "var(--sidebar-primary-foreground)",
@@ -61,6 +61,11 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        success: "var(--success)",
+        warning: "var(--warning)",
+        textPrimary: "var(--textPrimary)",
+        textMuted: "var(--textMuted)",
+        surface: "var(--surface)",
       },
       fontFamily: {
         sans: ["var(--font-sans)"],

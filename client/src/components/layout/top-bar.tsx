@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import { useWebSocket } from "@/hooks/use-websocket";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 export default function TopBar() {
@@ -30,6 +31,8 @@ export default function TopBar() {
               {isConnected ? "Live" : "Offline"}
             </span>
           </div>
+          
+          <ThemeToggle />
           
           <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
             <User className="text-muted-foreground text-sm" size={16} />
